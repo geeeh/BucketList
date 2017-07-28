@@ -89,3 +89,4 @@ class BucketlistTestCase(unittest.TestCase):
                                                                     data=json.dumps(data_input),
                                                                     content_type='application/json')
         self.assertEqual(bucketlists.status_code, 401)
+

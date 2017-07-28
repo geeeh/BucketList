@@ -373,6 +373,11 @@ class BucketlistModification(Resource):
         """
 
         access_token = request.headers.get('Token')
+        if not access_token:
+            result = {
+                "message": "unauthorized action"
+            }
+            return make_response(jsonify(result), 401)
 
         if access_token:
             # Attempt to decode the token and get the User ID
@@ -405,7 +410,12 @@ class BucketlistModification(Resource):
         deletes a bucket list given its id
         """
         access_token = request.headers.get('Token')
-
+        if not access_token:
+            result = {
+                "message": "unauthorized action"
+            }
+            return make_response(jsonify(result), 401)
+        
         if access_token:
             # Attempt to decode the token and get the User ID
             user_id = User.decode_auth_token(access_token)
@@ -446,6 +456,12 @@ class Bucketlistitems(Resource):
     def post(self, id):
         """insert a bucket list"""
         access_token = request.headers.get('Token')
+
+        if not access_token:
+            result = {
+                "message": "unauthorized action"
+            }
+            return make_response(jsonify(result), 401)
 
         if access_token:
             # Attempt to decode the token and get the User ID
@@ -498,31 +514,34 @@ class BucketlistitemModification(Resource):
                 return make_response(jsonify(result), 401)
 
     @api.header('Token', required=True)
-    @api.response(204, 'Bucketlistitem successfully deleted')
-    def delete(self, item_id):
+    def delete(self, id, item_id):
 
         """"
         deletes a bucket list given its id
         """
         access_token = request.headers.get('Token')
+        if not access_token:
+            result = {
+                "message": "unauthorized action"
+            }
+            return make_response(jsonify(result), 401)
 
         if access_token:
             # Attempt to decode the token and get the User ID
             user_id = User.decode_auth_token(access_token)
             if isinstance(user_id, int):
-                output = update_bucketlistitem(id, item_id, request.json)
+                output = delete_bucketlistitem(item_id, id)
                 if not output:
-                    output = delete_bucketlistitem(item_id)
-                    if output:
-                        result = {
-                            "message": "Bucketlistitem successfully deleted"
-                        }
-                        return make_response(jsonify(result), 204)
-                    else:
-                        result = {
-                            "message": "Item not found"
-                        }
-                        return make_response(jsonify(result), 404)
+
+                    result = {
+                        "message": "Bucketlistitem successfully deleted"
+                    }
+                    return make_response(jsonify(result), 204)
+                else:
+                    result = {
+                        "message": "Item not found"
+                    }
+                    return make_response(jsonify(result), 404)
 
             else:
                 result = {
