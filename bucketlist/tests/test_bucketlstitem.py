@@ -102,10 +102,17 @@ class BucketlistTestCase(unittest.TestCase):
         output = {
             "Token": data['auth_token'],
         }
+        bucket_data={
+            "name": "bucket 1"
+        }
         input_data = {
             "name": "bucket 1",
             "done": True
         }
+        bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists',
+                                                                    headers=output, data=json.dumps(bucket_data),
+                                                                    content_type='application/json')
+        self.assertEqual(bucketlists.status_code, 201)
         bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists/1/items',
                                                                     headers=output, data=json.dumps(input_data),
                                                                     content_type='application/json')

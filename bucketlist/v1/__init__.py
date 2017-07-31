@@ -466,17 +466,24 @@ class Bucketlistitems(Resource):
         if access_token:
             # Attempt to decode the token and get the User ID
             user_id = User.decode_auth_token(access_token)
-            if isinstance(user_id, int):
-                create_bucketlistitem(id, request.json)
-                result = {
-                    "message": "Bucketlistitem successfully created"
-                }
-                return make_response(jsonify(result), 201)
+            buckets = Bucketlist.query.filter_by(id=id).first()
+            if buckets:
+                if isinstance(user_id, int):
+                    create_bucketlistitem(id, request.json)
+                    result = {
+                        "message": "Bucketlistitem successfully created"
+                    }
+                    return make_response(jsonify(result), 201)
+                else:
+                    result = {
+                        "message": "unauthorized action"
+                    }
+                    return make_response(jsonify(result), 201)
             else:
                 result = {
-                    "message": "unauthorized action"
+                    "message": "bad request"
                 }
-                return make_response(jsonify(result), 201)
+                return make_response(jsonify(result), 400)
 
 
 @ns.route('/bucketlists/<int:id>/items/<int:item_id>')
@@ -494,24 +501,31 @@ class BucketlistitemModification(Resource):
         if access_token:
             # Attempt to decode the token and get the User ID
             user_id = User.decode_auth_token(access_token)
-            if isinstance(user_id, int):
-                output = update_bucketlistitem(id, item_id, request.json)
-                if not output:
-                    result = {
-                        "message": "Bucketlistitem successfully updated"
-                    }
-                    return make_response(jsonify(result), 204)
+            buckets = Bucketlist.query.filter_by(id=id).first()
+            if buckets:
+                if isinstance(user_id, int):
+                    output = update_bucketlistitem(id, item_id, request.json)
+                    if not output:
+                        result = {
+                            "message": "Bucketlistitem successfully updated"
+                        }
+                        return make_response(jsonify(result), 204)
+                    else:
+                        result = {
+                            "message": "Item not found"
+                        }
+                        return make_response(jsonify(result), 404)
+
                 else:
                     result = {
-                        "message": "Item not found"
+                        "message": "unauthorized action"
                     }
-                    return make_response(jsonify(result), 404)
-
+                    return make_response(jsonify(result), 401)
             else:
                 result = {
-                    "message": "unauthorized action"
+                    "message": "bad request"
                 }
-                return make_response(jsonify(result), 401)
+                return make_response(jsonify(result), 400)
 
     @api.header('Token', required=True)
     def delete(self, id, item_id):
@@ -529,22 +543,29 @@ class BucketlistitemModification(Resource):
         if access_token:
             # Attempt to decode the token and get the User ID
             user_id = User.decode_auth_token(access_token)
-            if isinstance(user_id, int):
-                output = delete_bucketlistitem(item_id, id)
-                if not output:
+            buckets = Bucketlist.query.filter_by(id=id).first()
+            if buckets:
+                if isinstance(user_id, int):
+                    output = delete_bucketlistitem(item_id, id)
+                    if not output:
 
-                    result = {
-                        "message": "Bucketlistitem successfully deleted"
-                    }
-                    return make_response(jsonify(result), 204)
+                        result = {
+                            "message": "Bucketlistitem successfully deleted"
+                        }
+                        return make_response(jsonify(result), 204)
+                    else:
+                        result = {
+                            "message": "Item not found"
+                        }
+                        return make_response(jsonify(result), 404)
+
                 else:
                     result = {
-                        "message": "Item not found"
+                        "message": "unauthorized action"
                     }
-                    return make_response(jsonify(result), 404)
-
+                    return make_response(jsonify(result), 401)
             else:
                 result = {
-                    "message": "unauthorized action"
+                    "message": "bad request"
                 }
-                return make_response(jsonify(result), 401)
+                return make_response(jsonify(result), 400)
