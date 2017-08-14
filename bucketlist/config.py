@@ -10,11 +10,11 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://godwingitonga@localhost/bucket'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://godwingitonga@localhost/bucketlist'
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql://godwingitonga@localhost/bucket'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://godwingitonga@localhost/bucketlist'
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     DEBUG = True
 

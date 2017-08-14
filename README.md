@@ -4,7 +4,7 @@
 # Introduction
 A flask based API application that gives users the opportunity to create, update, delete and view bucket list items. bucket list items are wishes users wish to accomplish before
 kicking the bucket.
-#API ENDPOINTS
+#API Endpoints
 1. `POST v1/auth/login`  login a user
 2. `POST v1/auth/register` register a user
 3. `POST v1/bucketlists`   create a bucketlist
@@ -21,8 +21,7 @@ kicking the bucket.
 - virtualenv 
 - autoenv
 
-
-#installation
+# Installation
 - Download the project locally by running : `git  clone https://github.com/geeeh/BucketList.git`
 - `cd Bucketlist`
 - create a virtualenv file. `virtualenv venv`
@@ -33,10 +32,11 @@ kicking the bucket.
 -  save the file
 - Install the requirements in the `requirements.txt` file. Run `pip install -r requirements.txt`
 -  Run the application. `python run.py`     
-#TESTING
+
+# Testing
 To run tests against the project run:
 `python manage.py test`
 
-#CONTRIBUTORS
+#Contributors
 - Godwin Gitonga
 

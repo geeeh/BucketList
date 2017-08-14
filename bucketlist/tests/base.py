@@ -1,6 +1,6 @@
 from flask import json
 
-from bucketlist import create_app
+from bucketlist.app import create_app
 from bucketlist.extensions import db
 
 
@@ -13,11 +13,11 @@ class Initializer(object):
         self.registration_details = {
             "username": "tester",
             "email": "test@example.com",
-            "password": "password"
+            "password": "Password12"
         }
         self.login_details = {
             "username": "tester",
-            "password": "password"
+            "password": "Password12"
         }
 
         with self.app.app_context():
@@ -32,7 +32,7 @@ class Initializer(object):
         """
         register user
         """
-        register = self.app.test_client().post('/bucketlist/v1/auth/register',
+        register = self.app.test_client().post('/auth/register',
                                                data=json.dumps(self.registration_details),
                                                content_type='application/json')
         return register
@@ -42,7 +42,7 @@ class Initializer(object):
         login user
         """
         self.register()
-        login = self.app.test_client().post('/bucketlist/v1/auth/login',
+        login = self.app.test_client().post('/auth/login',
                                             data=json.dumps(self.login_details),
                                             content_type='application/json')
         return login

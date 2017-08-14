@@ -1,4 +1,4 @@
-from bucketlist import app
+from bucketlist.app import app
 
 if __name__ == '__main__':
     app.run()

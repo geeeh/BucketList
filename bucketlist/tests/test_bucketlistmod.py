@@ -26,11 +26,11 @@ class BucketlistTestCase(unittest.TestCase):
         input_data = {
             "name": "bucket 1"
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists',
+        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
                                                                     headers=output, data=json.dumps(input_data),
                                                                     content_type='application/json')
-        self.assertEqual(bucketlists.status_code, 201)
-        bucketlists = self.initializer.get_app().test_client().get('/bucketlist/v1/bucketlists/1',
+        self.assertEqual(bucketlists.status_code, 200)
+        bucketlists = self.initializer.get_app().test_client().get('/bucketlists/1',
                                                                    headers=output)
         self.assertEqual(bucketlists.status_code, 200)
 
@@ -45,11 +45,11 @@ class BucketlistTestCase(unittest.TestCase):
         input_data = {
             "name": "bucket 1"
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists',
+        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
                                                                     headers=output, data=json.dumps(input_data),
                                                                     content_type='application/json')
-        self.assertEqual(bucketlists.status_code, 201)
-        bucketlists = self.initializer.get_app().test_client().get('/bucketlist/v1/bucketlists/1',
+        self.assertEqual(bucketlists.status_code, 200)
+        bucketlists = self.initializer.get_app().test_client().get('/bucketlists/1',
                                                                    headers=None)
         self.assertEqual(bucketlists.status_code, 401)
 
@@ -67,14 +67,14 @@ class BucketlistTestCase(unittest.TestCase):
             "name": "bucket 2"
         }
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists',
+        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
                                                                     headers=output, data=json.dumps(input_data),
                                                                     content_type='application/json')
-        self.assertEqual(bucketlists.status_code, 201)
-        bucketlists = self.initializer.get_app().test_client().put('/bucketlist/v1/bucketlists/1',
+        self.assertEqual(bucketlists.status_code, 200)
+        bucketlists = self.initializer.get_app().test_client().put('/bucketlists/1',
                                                                    headers=output, data=json.dumps(update_data),
                                                                    content_type='application/json')
-        self.assertEqual(bucketlists.status_code, 204)
+        self.assertEqual(bucketlists.status_code, 200)
 
     def test_unauthorized_update(self):
         login = self.initializer.login()
@@ -90,11 +90,11 @@ class BucketlistTestCase(unittest.TestCase):
             "name": "bucket 2"
         }
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists',
+        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
                                                                     headers=output, data=json.dumps(input_data),
                                                                     content_type='application/json')
-        self.assertEqual(bucketlists.status_code, 201)
-        bucketlists = self.initializer.get_app().test_client().put('/bucketlist/v1/bucketlists/1',
+        self.assertEqual(bucketlists.status_code, 200)
+        bucketlists = self.initializer.get_app().test_client().put('/bucketlists/1',
                                                                    data=json.dumps(update_data),
                                                                    content_type='application/json')
         self.assertEqual(bucketlists.status_code, 401)
@@ -111,13 +111,13 @@ class BucketlistTestCase(unittest.TestCase):
             "name": "bucket 1"
         }
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists',
+        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
                                                                     headers=output, data=json.dumps(input_data),
                                                                     content_type='application/json')
-        self.assertEqual(bucketlists.status_code, 201)
-        bucketlists = self.initializer.get_app().test_client().delete('/bucketlist/v1/bucketlists/1',
+        self.assertEqual(bucketlists.status_code, 200)
+        bucketlists = self.initializer.get_app().test_client().delete('/bucketlists/1',
                                                                       headers=output)
-        self.assertEqual(bucketlists.status_code, 204)
+        self.assertEqual(bucketlists.status_code, 200)
 
     def test_unauthorized_delete(self):
         login = self.initializer.login()
@@ -131,9 +131,9 @@ class BucketlistTestCase(unittest.TestCase):
             "name": "bucket 1"
         }
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlist/v1/bucketlists',
+        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
                                                                     headers=output, data=json.dumps(input_data),
                                                                     content_type='application/json')
-        self.assertEqual(bucketlists.status_code, 201)
-        bucketlists = self.initializer.get_app().test_client().delete('/bucketlist/v1/bucketlists/1')
+        self.assertEqual(bucketlists.status_code, 200)
+        bucketlists = self.initializer.get_app().test_client().delete('/bucketlists/1')
         self.assertEqual(bucketlists.status_code, 401)
