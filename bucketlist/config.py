@@ -24,6 +24,7 @@ class TestingConfig(Config):
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     TESTING = True
 
+
 app_config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,

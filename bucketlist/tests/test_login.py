@@ -29,7 +29,9 @@ class RegisterTestCase(unittest.TestCase):
         """
         register = self.initializer.register()
         self.assertEqual(register.status_code, 201)
-        login = self.initializer.get_app().test_client().post('/auth/login',
-                                                              data=json.dumps(self.wrong_login_details),
-                                                              content_type='application/json')
+        login = self.initializer.get_app().test_client().post(
+            '/auth/login',
+            data=json.dumps(
+                self.wrong_login_details),
+            content_type='application/json')
         self.assertEqual(login.status_code, 401)

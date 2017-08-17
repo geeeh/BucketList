@@ -17,8 +17,13 @@ authorizations = {
     }
 }
 
-api = Api(v1, version='1.0', title='Bucket list Application', authorization=authorizations, security='Bearer',
-          description='A bucketlist api')
+api = Api(
+    v1,
+    version='1.0',
+    title='Bucket list Application',
+    authorization=authorizations,
+    security='Bearer',
+    description='A bucketlist api')
 
 register_expect_fields = api.model('Registration', {
     'username': fields.String(required=True, description='user username'),
@@ -47,7 +52,7 @@ class Register(Resource):
 
         is_valid = validate_email(email) and self.validate_password(password)
         if is_valid:
-            user = User.create_user(username, email, password )
+            user = User.create_user(username, email, password)
             if isinstance(user, User):
                 result = {
                     'message': "user registered successfully",
@@ -65,16 +70,15 @@ class Register(Resource):
 
     @staticmethod
     def validate_password(password):
-            while True:
-                if len(password) < 8:
-                    return False
-                elif re.search('[0-9]', password) is None:
-                    return False
-                elif re.search('[A-Z]', password) is None:
-                    return False
-                else:
-                    return True
-
+        while True:
+            if len(password) < 8:
+                return False
+            elif re.search('[0-9]', password) is None:
+                return False
+            elif re.search('[A-Z]', password) is None:
+                return False
+            else:
+                return True
 
 
 login_expect_fields = api.model('Login', {
@@ -95,11 +99,13 @@ class Login(Resource):
 
         """
         try:
-            user = User.query.filter_by(username=request.json.get('username')).first()
+            user = User.query.filter_by(
+                username=request.json.get('username')).first()
 
             # Try to authenticate the found user using their password
             if user and user.check_password(request.json.get('password')):
-                # Generate the access token. This will be used as the authorization header
+                # Generate the access token. This will be used as the
+                # authorization header
                 access_token = user.encode_auth_token(user.id)
                 if access_token:
                     result = {
@@ -122,14 +128,24 @@ class Login(Resource):
 
 
 pagination_arguments = reqparse.RequestParser()
-pagination_arguments.add_argument('page', location="args", type=int, required=False, default=1)
-pagination_arguments.add_argument('limit', location="args", type=int, required=False, default=20)
+pagination_arguments.add_argument(
+    'page',
+    location="args",
+    type=int,
+    required=False,
+    default=1)
+pagination_arguments.add_argument(
+    'limit',
+    location="args",
+    type=int,
+    required=False,
+    default=20)
 pagination_arguments.add_argument('q', location="args", required=False)
 
 bucketlist_expect = api.model('Bucketlist_expect', {
-        'name': fields.String(description='Bucketlist name', required=True),
+    'name': fields.String(description='Bucketlist name', required=True),
 
-    })
+})
 
 
 @ns.route('/bucketlists/')
@@ -142,7 +158,6 @@ class Bucketlists(Resource):
     @api.header('Token', required=True)
     @api.expect(pagination_arguments)
     def get(self):
-
         """
         List all bucket list
         """
@@ -169,7 +184,12 @@ class Bucketlists(Resource):
                 if search_words:
                     bucketlists_page = Bucketlist.query.filter(
                         Bucketlist.created_by == user_id,
-                        Bucketlist.name.contains(search_words + "%")).paginate(page, limit, False)
+                        Bucketlist.name.contains(
+                            search_words +
+                            "%")).paginate(
+                        page,
+                        limit,
+                        False)
                     if bucketlists_page:
                         total = bucketlists_page.pages
                         has_next = bucketlists_page.has_next
@@ -177,12 +197,12 @@ class Bucketlists(Resource):
 
                         if has_next:
                             next_page = str(request.url_root) + 'bucketlists?' + \
-                                        'q=' + str(search_words) + '&page=' + str(page + 1)
+                                'q=' + str(search_words) + '&page=' + str(page + 1)
                         else:
                             next_page = 'None'
                         if has_previous:
                             previous_page = request.url_root + 'bucketlists?' + \
-                                            'q=' + str(search_words) + '&page=' + str(page - 1)
+                                'q=' + str(search_words) + '&page=' + str(page - 1)
                         else:
                             previous_page = 'None'
                         bucketlists = bucketlists_page.items
@@ -190,7 +210,8 @@ class Bucketlists(Resource):
                             items = []
                             for item in bucketlists:
                                 buc_items = []
-                                bucketlist_items = Bucketlistitem.query.filter_by(bucketlist_id=item.id).all()
+                                bucketlist_items = Bucketlistitem.query.filter_by(
+                                    bucketlist_id=item.id).all()
                                 for any_item in bucketlist_items:
                                     an_item = {
                                         'id': any_item.id,
@@ -223,9 +244,9 @@ class Bucketlists(Resource):
                             }
                             return make_response(jsonify(result), 200)
 
-                bucketlists_page = Bucketlist.query.filter_by(created_by=user_id).paginate(page=page,
-                                                                                           per_page=limit,
-                                                                                           error_out=False)
+                bucketlists_page = Bucketlist.query.filter_by(
+                    created_by=user_id).paginate(
+                    page=page, per_page=limit, error_out=False)
                 if not bucketlists_page:
                     result = {
                         "message": "No bucketlist item  found"
@@ -238,12 +259,12 @@ class Bucketlists(Resource):
 
                 if has_next:
                     next_page = str(request.url_root) + 'bucketlists?' + \
-                                'limit=' + str(limit) + '&page=' + str(page + 1)
+                        'limit=' + str(limit) + '&page=' + str(page + 1)
                 else:
                     next_page = 'None'
                 if has_previous:
                     previous_page = request.url_root + 'bucketlists?' + \
-                                    'limit=' + str(limit) + '&page=' + str(page - 1)
+                        'limit=' + str(limit) + '&page=' + str(page - 1)
                 else:
                     previous_page = 'None'
 
@@ -252,7 +273,8 @@ class Bucketlists(Resource):
                 if bucketlists:
                     for item in bucketlists:
                         buc_items = []
-                        bucketlist_items = Bucketlistitem.query.filter_by(bucketlist_id=item.id).all()
+                        bucketlist_items = Bucketlistitem.query.filter_by(
+                            bucketlist_id=item.id).all()
                         for any_item in bucketlist_items:
                             an_item = {
                                 'id': any_item.id,
@@ -319,14 +341,12 @@ class Bucketlists(Resource):
                 output = Bucketlist.create_bucketlist(user_id, name)
                 if isinstance(output, Bucketlist):
                     result = {
-                        "message": "Bucketlist successfully created",
-                        "item": {
-                            "id": output.id,
-                            "name": output.name,
-                            "created_by": output.created_by,
-                            "date_created": output.date_created
-                        }
+                        "id": output.id,
+                        "name": output.name,
+                        "created_by": output.created_by,
+                        "date_created": output.date_created
                     }
+
                     return make_response(jsonify(result), 200)
                 else:
                     return output
@@ -341,7 +361,6 @@ class Bucketlists(Resource):
 class BucketlistModification(Resource):
     @api.header('Token', required=True)
     def get(self, id):
-
         """
         List all tasks'
         """
@@ -359,11 +378,13 @@ class BucketlistModification(Resource):
             user_id = User.decode_auth_token(access_token)
             if isinstance(user_id, int):
 
-                bucket = Bucketlist.query.filter_by(id=id, created_by=user_id).first()
+                bucket = Bucketlist.query.filter_by(
+                    id=id, created_by=user_id).first()
 
                 if bucket:
                     bucket_list = []
-                    items = Bucketlistitem.query.filter_by(bucketlist_id=id).all()
+                    items = Bucketlistitem.query.filter_by(
+                        bucketlist_id=id).all()
                     for item in items:
                         an_item = {
                             "id": item.id,
@@ -397,7 +418,6 @@ class BucketlistModification(Resource):
     @api.expect(bucketlist_expect)
     @api.header('Token', required=True)
     def put(self, id):
-
         """
         updates a bucket list given id and the data
         """
@@ -419,14 +439,12 @@ class BucketlistModification(Resource):
                 output = Bucketlist.update_bucketlist(id, user_id, name)
                 if isinstance(output, Bucketlist):
                     result = {
-                        "message": "Bucketlist successfully updated",
-                        "item": {
-                            "id": output.id,
-                            "name": output.name,
-                            "created_by": output.created_by,
-                            "date_created": output.date_created
-                        }
+                        "id": output.id,
+                        "name": output.name,
+                        "created_by": output.created_by,
+                        "date_created": output.date_created
                     }
+
                     return make_response(jsonify(result), 200)
 
                 else:
@@ -440,7 +458,6 @@ class BucketlistModification(Resource):
 
     @api.header('Token', required=True)
     def delete(self, id):
-
         """"
         deletes a bucket list given its id
         """
@@ -464,10 +481,11 @@ class BucketlistModification(Resource):
                 return make_response(jsonify(result), 401)
 
 
-bucketlistitem_expect = api.model('Bucketlistitem_expect', {
-    'name': fields.String(description='Bucketlist name', required=True),
-    'done': fields.Boolean(description='bucket list name', required=True),
-})
+bucketlistitem_expect = api.model(
+    'Bucketlistitem_expect', {
+        'name': fields.String(
+            description='Bucketlist name', required=True), 'done': fields.Boolean(
+                description='bucket list name', required=True, default=False), })
 
 
 @ns.route('/bucketlists/<int:id>/items/')
@@ -476,7 +494,6 @@ class Bucketlistitems(Resource):
     """
     Shows a list of all bucketlists, and lets you POST to add new bucketlists
     """
-
     @api.header('Token', required=True)
     def get(self, id):
         """
@@ -547,7 +564,7 @@ class Bucketlistitems(Resource):
             if not name:
                 return "name attribute not found!", 400
             done = request.json.get('done')
-            if done == None:
+            if done is None:
                 return "done attribute not found!", 400
         except AttributeError:
             return "attributes not found!", 400
@@ -559,14 +576,12 @@ class Bucketlistitems(Resource):
                 output = Bucketlistitem.create_bucketlistitem(id, name, done)
                 if isinstance(output, Bucketlistitem):
                     result = {
-                        "message": "Bucketlistitem successfully created",
-                        "item": {
-                            "id": output.id,
-                            "name": output.name,
-                            "done": output.done,
-                            "date_created": output.date_created
-                        }
+                        "id": output.id,
+                        "name": output.name,
+                        "done": output.done,
+                        "date_created": output.date_created
                     }
+
                     return make_response(jsonify(result), 200)
                 else:
                     return output
@@ -580,10 +595,10 @@ class Bucketlistitems(Resource):
 @ns.route('/bucketlists/<int:id>/items/<int:item_id>')
 @api.doc(params={})
 class BucketlistitemModification(Resource):
+
     @api.header('Token', required=True)
     @api.expect(bucketlistitem_expect)
     def put(self, id, item_id):
-
         """
         updates a bucket list given id and the data
         """
@@ -600,16 +615,14 @@ class BucketlistitemModification(Resource):
             buckets = Bucketlist.query.filter_by(id=id).first()
             if isinstance(user_id, int):
                 if buckets:
-                    output = Bucketlistitem.update_bucketlistitem(item_id, id,  name, done)
+                    output = Bucketlistitem.update_bucketlistitem(
+                        item_id, id, name, done)
                     if isinstance(output, Bucketlistitem):
                         result = {
-                            "message": "Bucketlistitem successfully updated",
-                            "item": {
-                                "id": output.id,
-                                "name": output.name,
-                                "done": output.done,
-                                "date_created": output.date_created
-                            }
+                            "id": output.id,
+                            "name": output.name,
+                            "done": output.done,
+                            "date_created": output.date_created
                         }
                         return make_response(jsonify(result), 200)
                     else:
@@ -627,7 +640,6 @@ class BucketlistitemModification(Resource):
 
     @api.header('Token', required=True)
     def delete(self, id, item_id):
-
         """"
         deletes a bucket list item given its id
         """
@@ -656,4 +668,3 @@ class BucketlistitemModification(Resource):
                     "message": "unauthorized action"
                 }
                 return make_response(jsonify(result), 401)
-

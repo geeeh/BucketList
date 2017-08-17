@@ -20,25 +20,30 @@ class BucketlistTestCase(unittest.TestCase):
         output = {
             "Token": data['auth_token'],
         }
-        buc_data={
+        buc_data = {
             "name": "bucket 1"
         }
         input_data = {
             "name": "bucket 1 item",
             "done": True
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
-                                                                    headers=output, data=json.dumps(buc_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/',
+            headers=output,
+            data=json.dumps(buc_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/1/items/',
-                                                                    headers=output, data=json.dumps(input_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/1/items/',
+            headers=output,
+            data=json.dumps(input_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
-        bucketlists = self.initializer.get_app().test_client().get('/bucketlists/1',
-                                                                   headers=output)
+        bucketlists = self.initializer.get_app().test_client().get(
+            '/bucketlists/1', headers=output)
         self.assertEqual(bucketlists.status_code, 200)
+        self.assertIn('bucket 1 item', bucketlists.get_data(as_text=True))
 
     def test_post_item_directly(self):
         login = self.initializer.login()
@@ -53,9 +58,11 @@ class BucketlistTestCase(unittest.TestCase):
             "done": False
         }
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/1/items/',
-                                                                    headers=output, data=json.dumps(input_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/1/items/',
+            headers=output,
+            data=json.dumps(input_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 404)
 
     def test_update_item(self):
@@ -67,7 +74,7 @@ class BucketlistTestCase(unittest.TestCase):
             "Token": data['auth_token'],
         }
 
-        bucket_data={
+        bucket_data = {
             "name": "bucket 1"
         }
         input_data = {
@@ -76,23 +83,30 @@ class BucketlistTestCase(unittest.TestCase):
         }
 
         update_data = {
-            "name": "bucket 1",
+            "name": "bucket 2",
             "done": True
         }
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
-                                                                    headers=output, data=json.dumps(bucket_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/',
+            headers=output,
+            data=json.dumps(bucket_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
 
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/1/items/',
-                                                                    headers=output, data=json.dumps(input_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/1/items/',
+            headers=output,
+            data=json.dumps(input_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
-        bucketlists = self.initializer.get_app().test_client().put('/bucketlists/1/items/1',
-                                                                   headers=output, data=json.dumps(update_data),
-                                                                   content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().put(
+            '/bucketlists/1/items/1',
+            headers=output,
+            data=json.dumps(update_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
+        self.assertIn('bucket 2', bucketlists.get_data(as_text=True))
 
     def test_delete_item(self):
         login = self.initializer.login()
@@ -102,21 +116,29 @@ class BucketlistTestCase(unittest.TestCase):
         output = {
             "Token": data['auth_token'],
         }
-        bucket_data={
+        bucket_data = {
             "name": "bucket 1"
         }
         input_data = {
             "name": "bucket 1",
             "done": True
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
-                                                                    headers=output, data=json.dumps(bucket_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/',
+            headers=output,
+            data=json.dumps(bucket_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/1/items/',
-                                                                    headers=output, data=json.dumps(input_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/1/items/',
+            headers=output,
+            data=json.dumps(input_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
-        bucketlists = self.initializer.get_app().test_client().delete('/bucketlists/1/items/1',
-                                                                      headers=output)
+        bucketlists = self.initializer.get_app().test_client().delete(
+            '/bucketlists/1/items/1', headers=output)
         self.assertEqual(bucketlists.status_code, 200)
+        self.assertIn(
+            'Bucketlistitem successfully deleted',
+            bucketlists.get_data(
+                as_text=True))

@@ -24,7 +24,7 @@ class RegisterTestCase(unittest.TestCase):
             "password": "Password12"
         }
 
-        self.weak_pass={
+        self.weak_pass = {
             "username": "same email",
             "email": "test@example.com",
             "password": "pass"
@@ -44,9 +44,11 @@ class RegisterTestCase(unittest.TestCase):
         self.assertEqual(result.status_code, 201)
 
     def test_for_valid_username(self):
-        result = self.initializer.get_app().test_client().post('/auth/register',
-                                                               data=json.dumps(self.invalid_username),
-                                                               content_type='application/json')
+        result = self.initializer.get_app().test_client().post(
+            '/auth/register',
+            data=json.dumps(
+                self.invalid_username),
+            content_type='application/json')
         self.assertEqual(result.status_code, 201)
 
     def test_already_registered_username(self):

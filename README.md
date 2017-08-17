@@ -27,7 +27,7 @@ kicking the bucket.
 - create a virtualenv file. `virtualenv venv`
 - create a .env file and add the following lines:
 - `source venv/bin/activate`
-- `export APP_SETTINGS=development`
+- `export APP_SETTINGS=development` for development. for different environment change this to the appropriate environment.
 - `export SECRET=<your secret key here. It can be any combination of characters>`   
 -  save the file
 - Install the requirements in the `requirements.txt` file. Run `pip install -r requirements.txt`

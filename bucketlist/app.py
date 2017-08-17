@@ -33,5 +33,5 @@ def register_blueprints(app):
     app.register_blueprint(v1)
     return None
 
-app = create_app(config_name)
 
+app = create_app(config_name)

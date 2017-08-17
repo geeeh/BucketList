@@ -32,9 +32,11 @@ class Initializer(object):
         """
         register user
         """
-        register = self.app.test_client().post('/auth/register',
-                                               data=json.dumps(self.registration_details),
-                                               content_type='application/json')
+        register = self.app.test_client().post(
+            '/auth/register',
+            data=json.dumps(
+                self.registration_details),
+            content_type='application/json')
         return register
 
     def login(self):
@@ -42,7 +44,9 @@ class Initializer(object):
         login user
         """
         self.register()
-        login = self.app.test_client().post('/auth/login',
-                                            data=json.dumps(self.login_details),
-                                            content_type='application/json')
+        login = self.app.test_client().post(
+            '/auth/login',
+            data=json.dumps(
+                self.login_details),
+            content_type='application/json')
         return login

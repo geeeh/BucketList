@@ -22,10 +22,16 @@ class BucketlistTestCase(unittest.TestCase):
             "Token": data['auth_token'],
             "q": "bucketlist1"
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
-                                                                    headers=output, data=json.dumps(input_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/',
+            headers=output,
+            data=json.dumps(input_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
+        self.assertIn(
+            'bucket 1',
+            bucketlists.get_data(
+                as_text=True))
 
     def test_get_bucketlist(self):
         """
@@ -60,19 +66,26 @@ class BucketlistTestCase(unittest.TestCase):
         get_data = {
             "name": "bucketlist 1"
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
-                                                                    headers=output, data=json.dumps(get_data),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/',
+            headers=output,
+            data=json.dumps(get_data),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 200)
-        bucketlists = self.initializer.get_app().test_client().get('/bucketlists/',
-                                                                   headers=search_out)
+        bucketlists = self.initializer.get_app().test_client().get(
+            '/bucketlists/', headers=search_out)
         self.assertEqual(bucketlists.status_code, 200)
+        self.assertIn('bucketlist', bucketlists.get_data(as_text=True))
 
     def test_unauthorized_get_bucketlist(self):
         output = None
         bucketlists = self.initializer.get_app().test_client().get('/bucketlists/',
                                                                    headers=output)
         self.assertEqual(bucketlists.status_code, 401)
+        self.assertIn(
+            'unauthorized action',
+            bucketlists.get_data(
+                as_text=True))
 
     def test_post_bucketlist_without_data(self):
         login = self.initializer.login()
@@ -83,17 +96,22 @@ class BucketlistTestCase(unittest.TestCase):
         output = {
             "Token": data['auth_token']
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
-                                                                    headers=output, data=json.dumps(data_input),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/',
+            headers=output,
+            data=json.dumps(data_input),
+            content_type='application/json')
         self.assertEqual(bucketlists.status_code, 400)
+        self.assertIn('not found', bucketlists.get_data(as_text=True))
 
     def test_unauthorized_post_bucketlist(self):
         data_input = {
             "name": "bucketlist 1"
         }
-        bucketlists = self.initializer.get_app().test_client().post('/bucketlists/',
-                                                                    data=json.dumps(data_input),
-                                                                    content_type='application/json')
+        bucketlists = self.initializer.get_app().test_client().post(
+            '/bucketlists/', data=json.dumps(data_input), content_type='application/json')
         self.assertEqual(bucketlists.status_code, 401)
-
+        self.assertIn(
+            'unauthorized action',
+            bucketlists.get_data(
+                as_text=True))

@@ -18,7 +18,11 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), unique=True, nullable=False)
 
-    bucketlists = relationship("Bucketlist", backref="users", cascade="all, delete-orphan", lazy='dynamic')
+    bucketlists = relationship(
+        "Bucketlist",
+        backref="users",
+        cascade="all, delete-orphan",
+        lazy='dynamic')
 
     def __init__(self, username, email, password):
         self.username = username
@@ -133,7 +137,11 @@ class Bucketlist(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    bucketlists = relationship("Bucketlistitem", backref="bucketlists", cascade="all, delete-orphan", lazy='dynamic')
+    bucketlists = relationship(
+        "Bucketlistitem",
+        backref="bucketlists",
+        cascade="all, delete-orphan",
+        lazy='dynamic')
 
     def __init__(self, name, created_by):
         self.name = name
@@ -189,70 +197,71 @@ class Bucketlist(db.Model):
 
 
 class Bucketlistitem(db.Model):
-        __tablename__ = 'bucketlistitems'
+    __tablename__ = 'bucketlistitems'
 
-        id = db.Column(db.Integer, primary_key=True)
-        name = db.Column(db.String(100))
-        done = db.Column(db.Boolean, default=False)
-        bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'))
-        date_created = db.Column(db.DateTime,
-                                 default=db.func.current_timestamp())
-        date_modified = db.Column(
-            db.DateTime, default=db.func.current_timestamp(),
-            onupdate=db.func.current_timestamp())
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    done = db.Column(db.Boolean, default=False)
+    bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'))
+    date_created = db.Column(db.DateTime,
+                             default=db.func.current_timestamp())
+    date_modified = db.Column(
+        db.DateTime, default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp())
 
-        def __init__(self, name, done, bucketlist_id):
-            self.name = name
-            self.bucketlist_id = bucketlist_id
-            self.done = done
+    def __init__(self, name, done, bucketlist_id):
+        self.name = name
+        self.bucketlist_id = bucketlist_id
+        self.done = done
 
-        @staticmethod
-        def create_bucketlistitem(bucketlist_id, name, done):
-            try:
-                bucketlistitem = Bucketlistitem.query.filter_by(name=name,
-                                                                bucketlist_id=bucketlist_id).first()
-                if bucketlistitem:
-                    return "Item name already taken!", 200
-            except InvalidQuery:
-                return "query error", 500
-            bucketlistitem = Bucketlistitem(name, done, bucketlist_id)
-            db.session.add(bucketlistitem)
-            db.session.commit()
-            return bucketlistitem
+    @staticmethod
+    def create_bucketlistitem(bucketlist_id, name, done):
+        try:
+            bucketlistitem = Bucketlistitem.query.filter_by(
+                name=name, bucketlist_id=bucketlist_id).first()
+            if bucketlistitem:
+                return "Item name already taken!", 200
+        except InvalidQuery:
+            return "query error", 500
+        bucketlistitem = Bucketlistitem(name, done, bucketlist_id)
+        db.session.add(bucketlistitem)
+        db.session.commit()
+        return bucketlistitem
 
-        @staticmethod
-        def update_bucketlistitem(bucketlistitem_id, bucketlist_id, name=None, done=None):
-            try:
-                bucketlistitem = Bucketlistitem.query.filter_by(id=bucketlistitem_id,
-                                                                bucketlist_id=bucketlist_id).first()
-                if not bucketlistitem:
-                    return "Item not found!"
-            except InvalidQuery:
-                return "Query Error!", 500
-            if name:
-                bucketlistitem.name = name
-            if done:
-                bucketlistitem.done = done
-            bucketlistitem.bucketlist_id = bucketlist_id
-            db.session.add(bucketlistitem)
-            db.session.commit()
-            return bucketlistitem
+    @staticmethod
+    def update_bucketlistitem(
+            bucketlistitem_id,
+            bucketlist_id,
+            name=None,
+            done=None):
+        try:
+            bucketlistitem = Bucketlistitem.query.filter_by(
+                id=bucketlistitem_id, bucketlist_id=bucketlist_id).first()
+            if not bucketlistitem:
+                return "Item not found!"
+        except InvalidQuery:
+            return "Query Error!", 500
+        if name:
+            bucketlistitem.name = name
+        if done:
+            bucketlistitem.done = done
+        bucketlistitem.bucketlist_id = bucketlist_id
+        db.session.add(bucketlistitem)
+        db.session.commit()
+        return bucketlistitem
 
-        @staticmethod
-        def delete_bucketlistitem(bucketlistitem_id, bucketlist_id):
-            try:
-                bucketlistitem = Bucketlistitem.query.filter_by(id=bucketlistitem_id,
-                                                                bucketlist_id=bucketlist_id).first()
-                if not bucketlistitem:
-                    return "Item not found!", 404
-            except:
-                return "Query Error!", 500
-            db.session.delete(bucketlistitem)
-            db.session.commit()
-            return "Bucketlistitem successfully deleted", 200
+    @staticmethod
+    def delete_bucketlistitem(bucketlistitem_id, bucketlist_id):
+        try:
+            bucketlistitem = Bucketlistitem.query.filter_by(
+                id=bucketlistitem_id, bucketlist_id=bucketlist_id).first()
+            if not bucketlistitem:
+                return "Item not found!", 404
+        except BaseException:
+            return "Query Error!", 500
+        db.session.delete(bucketlistitem)
+        db.session.commit()
+        return "Bucketlistitem successfully deleted", 200
 
-        def __repr__(self):
-            return '<Bucketlist item %r>' % self.name
-
-
-
+    def __repr__(self):
+        return '<Bucketlist item %r>' % self.name
